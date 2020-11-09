@@ -24,15 +24,10 @@ public class ConectorServidor extends Thread{
         String texto;
         try {
             servidor = new ServerSocket(puerto);
-            System.out.print("Servidor Exito");
             socket = servidor.accept();
-            System.out.print("Socket Exito");
             entrada = new InputStreamReader(socket.getInputStream());
-            System.out.print("Entrada Éxito " + entrada);
             mensaje = new BufferedReader(entrada);
-            System.out.print("Mensaje Éxito " + mensaje);
             salida = new DataOutputStream(socket.getOutputStream());
-            System.out.print("Salida Éxito " + salida);
             
             while(true){
                 texto = this.mensaje.readLine();

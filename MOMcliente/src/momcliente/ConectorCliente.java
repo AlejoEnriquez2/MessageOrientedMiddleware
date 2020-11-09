@@ -11,7 +11,6 @@ package momcliente;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ConectorCliente extends Thread{
@@ -31,13 +30,9 @@ public class ConectorCliente extends Thread{
         String texto;
         try {
             socket = new Socket(ip, this.puerto);
-            
             entrada = new InputStreamReader(socket.getInputStream());
-            System.out.print("Entrada Éxito " + entrada);
             mensaje = new BufferedReader(entrada);
-            System.out.print("Mensaje Éxito " + mensaje);
             salida = new DataOutputStream(socket.getOutputStream());
-            System.out.print("Salida Éxito " + salida);
             salida.writeUTF("Conectado... \n");
             
             while(true){
