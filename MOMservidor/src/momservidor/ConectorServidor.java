@@ -2,12 +2,12 @@ package momservidor;
 /*
  * @author alejo
  */
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ConectorServidor extends Thread{
     //Instancias
@@ -17,6 +17,8 @@ public class ConectorServidor extends Thread{
     private DataOutputStream salida;
     private BufferedReader mensaje;
     final int puerto = 8181;
+    private String hostname;
+    ArrayList<String> base = new ArrayList<>();
     
     public ConectorServidor(){}
     
@@ -28,11 +30,27 @@ public class ConectorServidor extends Thread{
             entrada = new InputStreamReader(socket.getInputStream());
             mensaje = new BufferedReader(entrada);
             salida = new DataOutputStream(socket.getOutputStream());
+            hostname = socket.getRemoteSocketAddress().toString();
+            
+            System.out.println("La ip del Servidor es: " + hostname);
             
             while(true){
                 texto = this.mensaje.readLine();
+                if(texto == "Conectado... \n"){
+                    for (int i=0; i<base.size(); i++){
+                        if(base.get(i).equals(null)){
+                            enviarMensaje(base.get(i));
+                        }
+                    }
+                }
                 VentanaServidorMOM.textAreaSer.setText(VentanaServidorMOM.textAreaSer.getText()+'\n'+texto);
+                enviarMensaje(texto);
             }
+            
+            /*while(true){
+                texto = this.mensaje.readLine();
+                VentanaServidorMOM.textAreaSer.setText(VentanaServidorMOM.textAreaSer.getText()+'\n'+texto);
+            }*/
         } catch (Exception e) {
             System.out.println("Error");
         }
@@ -41,13 +59,19 @@ public class ConectorServidor extends Thread{
     public void enviarMensaje(String mensaje){
         try {
             salida.writeUTF(mensaje+"\n");
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            base.add(mensaje);
+            System.out.println("Error al enviar mensaje, mensaje guardado");
+        }
     }
     
     public void desconectar(){
         try {
-            socket.close();
             servidor.close();   
-        } catch (Exception e) {}
+            socket.close();
+            System.out.println("Desconectar Servidor");
+        } catch (Exception e) {
+            System.out.println("No se pudo Desconectar Servidor");
+        }
     }
 }
